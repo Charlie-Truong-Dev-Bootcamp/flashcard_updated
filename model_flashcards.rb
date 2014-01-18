@@ -20,7 +20,7 @@ module Parser
 end
 
 class Card
-  attr_reader :definition
+  attr_reader :definition, :answer
   def initialize(data={})
     @definition = data[:definition]
     @answer = data[:answer]
@@ -33,9 +33,10 @@ end
 
 
 class Deck
-  attr_reader
+  attr_reader :failed_cards
   def initialize(cards = [])
     @cards = cards
+    @failed_cards = Array.new
   end
 
   def retrieve_random_card
@@ -46,5 +47,28 @@ class Deck
     cards = Parser::parser(file)
     self.new(cards)
   end
+
+  def add_failed_card(card, miss_count)
+    @failed_cards.push(card) if miss_count >= 4
+  end
 end
 
+class User
+  attr_reader :misses_on_current, :total_correct
+  def initialize
+    @misses_on_current = 0
+    @total_correct = 0
+  end
+
+  def update_missed_on_current
+    @misses_on_current += 1
+  end
+
+  def reset_missed_on_current
+    @misses_on_current = 0
+  end
+
+  def update_total_correct
+    @total_correct += 1
+  end
+end
